@@ -80,3 +80,26 @@ def test_parse_connection_termination():
     event_json = ('{"text": "", "type": "terminate_connection",'
                   ' "timestamp": "2014-02-01T08:09:10"}')
     sut.Event.parse(event_json)
+
+
+def test_getitem(tc_start_event):
+    assert tc_start_event['timestamp'] \
+        == '2014-02-01T08:09:10'
+
+
+def test_register_eventclass():
+    assert sut.MsgType.TC_STARTED in sut.EVENT_REGISTRY
+
+
+def test_register_eventclass_2():
+    dummy_event_id = 12345
+
+    @sut.register_eventclass(dummy_event_id)
+    class MyEvent(sut.Event):
+
+        def __init__(self):
+            schema = {}
+            super(MyEvent, self).__init__(schema,
+                                          type='dummy_type')
+    assert dummy_event_id in sut.EVENT_REGISTRY
+    assert sut.EVENT_REGISTRY[dummy_event_id] == MyEvent

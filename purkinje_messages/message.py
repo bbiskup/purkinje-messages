@@ -53,6 +53,7 @@ class Event(with_metaclass(abc.ABCMeta, object)):
                            constraints. Constraints are merged with
                            the base class constraints
         """
+        raise Exception("xyz")
         self.timestamp = datetime.now()
         self.data = {'type': kwargs['type'],
                      'text': kwargs['text'],

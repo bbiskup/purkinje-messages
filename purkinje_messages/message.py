@@ -113,6 +113,9 @@ def register_eventclass(event_id):
     """Decorator for registering event classes for parsing
     """
     def register(cls):
+        if not issubclass(cls, Event):
+            raise MessageException(('Cannot register a class that'
+                                    ' is not a subclass of Event'))
         EVENT_REGISTRY[event_id] = cls
         logger.debug('######### Event registry is now: {}'.format(
             EVENT_REGISTRY))

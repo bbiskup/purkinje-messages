@@ -91,7 +91,7 @@ def test_register_eventclass():
     assert sut.MsgType.TC_STARTED in sut.EVENT_REGISTRY
 
 
-def test_register_eventclass_2():
+def test_register_eventclass_valid_class():
     dummy_event_id = 12345
 
     @sut.register_eventclass(dummy_event_id)
@@ -103,3 +103,20 @@ def test_register_eventclass_2():
                                           type='dummy_type')
     assert dummy_event_id in sut.EVENT_REGISTRY
     assert sut.EVENT_REGISTRY[dummy_event_id] == MyEvent
+
+
+def test_register_eventclass_invalid_class():
+    with pytest.raises(sut.MessageException):
+        dummy_event_id = 12345
+
+        @sut.register_eventclass(dummy_event_id)
+        class C:
+            pass
+
+
+def test_msg_type():
+    assert sut.MsgType.TERMINATE_CONNECTION == 'terminate_connection'
+
+
+def test_message_exception():
+    sut.MessageException()

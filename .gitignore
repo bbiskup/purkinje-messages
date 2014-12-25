@@ -1,0 +1,15 @@
+/venv
+*.pyc
+/MANIFEST
+/dist
+/.cache
+__pycache__
+/.coverage
+*.egg-info
+/build
+/.coverage*
+/.coverage*
+/htmlcov
+/.tox
+*.bak
+/docs/_build

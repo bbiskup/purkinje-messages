@@ -12,7 +12,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
-import purkinje.message as sut
+import purkinje_messages.message as sut
 
 
 @pytest.fixture

@@ -45,7 +45,7 @@ class MsgType(object):
     # Meta information about project under test
     PROJ_INFO = 'proj_info'
 
-    TESTSUITE_STARTED = 'testsuite_started'
+    SESSION_STARTED = 'session_started'
     TC_STARTED = 'tc_started'
     TC_FINISHED = 'tc_finished'
 
@@ -172,6 +172,19 @@ class ConnectionTerminationEvent(Event):
         super(ConnectionTerminationEvent, self).__init__(
             schema,
             type=MsgType.TERMINATE_CONNECTION)
+
+    def _serialize(self, body):
+        pass
+
+
+@register_eventclass(MsgType.SESSION_STARTED)
+class SessionStartedEvent(Event):
+
+    def __init__(self, **kwargs):
+        schema = {}
+        super(SessionStartedEvent, self).__init__(
+            schema,
+            type=MsgType.SESSION_STARTED)
 
     def _serialize(self, body):
         pass

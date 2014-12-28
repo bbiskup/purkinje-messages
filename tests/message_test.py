@@ -41,6 +41,11 @@ def tc_finished_event(mock_date):
                                      verdict=sut.Verdict.PASS)
 
 
+@pytest.fixture
+def session_started_event(mock_date):
+    return sut.SessionStartedEvent()
+
+
 def test_tc_start_event_unicode(tc_start_event):
     expected = "tc_started: [2014-02-01T08:09:10] {}"
     assert str(
@@ -60,6 +65,12 @@ def test_tc_finished_event_unicode(tc_finished_event):
         tc_finished_event) == expected
 
 
+def test_session_started_event_unicode(session_started_event):
+    expected = ('session_started: '
+                '[2014-02-01T08:09:10] {}')
+    assert str(
+        session_started_event) == expected
+
 # @pytest.skip('needs mock')
 #  def test_timestamp(tc_start_event):
 #     assert isinstance(tc_start_event.timestamp, datetime)
@@ -71,7 +82,6 @@ def test_tc_start_event_serialize(tc_start_event):
                 'timestamp': '2014-02-01T08:09:10'
                 }
     assert json.loads(serialized) == expected
-    print serialized
 
 
 def test_connection_termination_serialize(connection_termination_event):
@@ -88,6 +98,14 @@ def test_tc_finished_event_serialize(tc_finished_event):
                 'timestamp': '2014-02-01T08:09:10',
                 'verdict': 'passed',
                            'name': 'tc_1'
+                }
+    assert json.loads(serialized) == expected
+
+
+def test_session_started_serialize(session_started_event):
+    serialized = session_started_event.serialize()
+    expected = {'type': 'session_started',
+                'timestamp': '2014-02-01T08:09:10'
                 }
     assert json.loads(serialized) == expected
 
@@ -109,6 +127,12 @@ def test_parse_tc_finished():
                   ' "timestamp": "2014-02-01T08:09:10",'
                   ' "verdict": "passed",'
                   ' "name": "tc_start"}')
+    sut.Event.parse(event_json)
+
+
+def test_parse_session_started():
+    event_json = ('{"type": "session_started",'
+                  ' "timestamp": "2014-02-01T08:09:10"}')
     sut.Event.parse(event_json)
 
 

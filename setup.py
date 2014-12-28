@@ -8,7 +8,7 @@ history = open('HISTORY.rst').read()
 
 def parse_requirements():
     with open('requirements.txt') as req:
-        return req.readlines()
+        return [x for x in req.readlines() if not x.startswith('-e ')]
 
 
 class Tox(TestCommand):

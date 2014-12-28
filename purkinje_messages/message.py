@@ -165,7 +165,8 @@ class TestCaseStartEvent(Event):
 class TestCaseFinishedEvent(Event):
 
     def __init__(self, **kwargs):
-        schema = {Required('name'): basestring,
+        schema = {Required('file'): basestring,
+                  Required('name'): basestring,
                   Required('verdict'): basestring}
         kwargs['type'] = MsgType.TC_FINISHED
         super(TestCaseFinishedEvent, self).__init__(schema,

@@ -67,19 +67,29 @@ def test_tc_finished_event_unicode(tc_finished_event):
 
 def test_tc_start_event_serialize(tc_start_event):
     serialized = tc_start_event.serialize()
-    expected = json.dumps({'type': 'tc_started',
-                           'timestamp': '2014-02-01T08:09:10'
-                           })
-    assert serialized == expected
+    expected = {'type': 'tc_started',
+                'timestamp': '2014-02-01T08:09:10'
+                }
+    assert json.loads(serialized) == expected
     print serialized
 
 
 def test_connection_termination_serialize(connection_termination_event):
     serialized = connection_termination_event.serialize()
-    expected = json.dumps({'type': 'terminate_connection',
-                           'timestamp': '2014-02-01T08:09:10'
-                           })
-    assert serialized == expected
+    expected = {'type': 'terminate_connection',
+                'timestamp': '2014-02-01T08:09:10'
+                }
+    assert json.loads(serialized) == expected
+
+
+def test_tc_finished_event_serialize(tc_finished_event):
+    serialized = tc_finished_event.serialize()
+    expected = {'type': 'tc_finished',
+                'timestamp': '2014-02-01T08:09:10',
+                'verdict': 'passed',
+                           'name': 'tc_1'
+                }
+    assert json.loads(serialized) == expected
 
 
 def test_parse_tc_start():
@@ -91,6 +101,14 @@ def test_parse_tc_start():
 def test_parse_connection_termination():
     event_json = ('{"type": "terminate_connection",'
                   ' "timestamp": "2014-02-01T08:09:10"}')
+    sut.Event.parse(event_json)
+
+
+def test_parse_tc_finished():
+    event_json = ('{"type": "terminate_connection",'
+                  ' "timestamp": "2014-02-01T08:09:10",'
+                  ' "verdict": "passed",'
+                  ' "name": "tc_start"}')
     sut.Event.parse(event_json)
 
 

@@ -112,8 +112,9 @@ def test_session_started_serialize(session_started_event):
 
 def test_parse_tc_start():
     event_json = ('{"type": "tc_started",'
-                  ' "timestamp": "2014-02-01T08:09:10"}')
-    sut.Event.parse(event_json)
+                  ' "timestamp": "2014-02-01T08:09:11"}')
+    event = sut.Event.parse(event_json)
+    assert event['timestamp'] == '2014-02-01T08:09:11'
 
 
 def test_parse_connection_termination():
@@ -123,10 +124,10 @@ def test_parse_connection_termination():
 
 
 def test_parse_tc_finished():
-    event_json = ('{"type": "terminate_connection",'
+    event_json = ('{"type": "tc_finished",'
                   ' "timestamp": "2014-02-01T08:09:10",'
                   ' "verdict": "passed",'
-                  ' "name": "tc_start"}')
+                  ' "name": "tc_1"}')
     sut.Event.parse(event_json)
 
 
@@ -134,6 +135,24 @@ def test_parse_session_started():
     event_json = ('{"type": "session_started",'
                   ' "timestamp": "2014-02-01T08:09:10"}')
     sut.Event.parse(event_json)
+
+
+def test_parse_incorrect_syntax():
+    with pytest.raises(ValueError):
+        sut.Event.parse('xyz')
+
+
+def test_parse_unknown_event_type():
+    event_json = ('{"type": "unknown_type",'
+                  ' "timestamp": "2014-02-01T08:09:10"}')
+    with pytest.raises(sut.MessageException):
+        sut.Event.parse(event_json)
+
+
+def test_parse_missing_attribute():
+    event_json = '{"type": "tc_finished"}'
+    with pytest.raises(sut.MessageException):
+        sut.Event.parse(event_json)
 
 
 def test_getitem(tc_start_event):

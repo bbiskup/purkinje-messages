@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """Message/event type for communication with browser and test runner"""
-from builtins import object
+from builtins import object, basestring
 
 from datetime import datetime
 from copy import deepcopy
@@ -65,23 +65,32 @@ class Event(with_metaclass(abc.ABCMeta, object)):
                            constraints. Constraints are merged with
                            the base class constraints
         """
-        self.timestamp = datetime.now()
+        timestamp = datetime.now()
         self.data = kwargs
-        self.data['timestamp'] = datetime.isoformat(
-            self.timestamp)
+
+        if 'timestamp' not in kwargs:
+            # Don't override a timestamp that has been passed
+            # explicitly (when parsing)
+            self.data['timestamp'] = datetime.isoformat(
+                timestamp)
 
         base_schema = {
-            Required('type'): str,
-            Required('timestamp'): str,
+            Required('type'): basestring,
+            Required('timestamp'): basestring,
         }
         schema = deepcopy(schema)
         schema.update(base_schema)
         self._schema = Schema(schema)
+        # print("##### %s >>>> %s", schema, self.data)
 
     def validate(self):
         """Schema validation of message contents
         """
-        self._schema(self.data)
+        try:
+            self._schema(self.data)
+        except TypeError, e:
+            raise MessageException('Validation failed: {}'
+                                   .format(e))
 
     def serialize(self):
         """Creates JSON representation of Event object.
@@ -120,7 +129,9 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         event_cls = EVENT_REGISTRY.get(event_type)
         if not event_cls:
             raise MessageException('Unknown event type {}'.format(event_type))
-        return event_cls(**event_dict)
+        result = event_cls(**event_dict)
+        result.validate()
+        return result
 
 
 def register_eventclass(event_id):
@@ -154,8 +165,8 @@ class TestCaseStartEvent(Event):
 class TestCaseFinishedEvent(Event):
 
     def __init__(self, **kwargs):
-        schema = {Required('name'): str,
-                  Required('verdict'): str}
+        schema = {Required('name'): basestring,
+                  Required('verdict'): basestring}
         kwargs['type'] = MsgType.TC_FINISHED
         super(TestCaseFinishedEvent, self).__init__(schema,
                                                     **kwargs)

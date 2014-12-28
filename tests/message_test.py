@@ -27,7 +27,7 @@ def mock_date(monkeypatch):
 
 @pytest.fixture
 def tc_start_event(mock_date):
-    return sut.TestCaseStartEvent(text='mytext')
+    return sut.TestCaseStartEvent()
 
 
 @pytest.fixture
@@ -35,15 +35,29 @@ def connection_termination_event(mock_date):
     return sut.ConnectionTerminationEvent()
 
 
+@pytest.fixture
+def tc_finished_event(mock_date):
+    return sut.TestCaseFinishedEvent(name='tc_1',
+                                     verdict=sut.Verdict.PASS)
+
+
 def test_tc_start_event_unicode(tc_start_event):
+    expected = "tc_started: [2014-02-01T08:09:10] {}"
     assert str(
-        tc_start_event) == 'tc_started: [2014-02-01T08:09:10] mytext'
+        tc_start_event) == expected
 
 
 def test_connection_termination_unicode(connection_termination_event):
     expected = ('terminate_connection: '
-                '[2014-02-01T08:09:10] ')
+                "[2014-02-01T08:09:10] {}")
     assert str(connection_termination_event) == expected
+
+
+def test_tc_finished_event_unicode(tc_finished_event):
+    expected = ('tc_finished: [2014-02-01T08:09:10]'
+                ' {name: tc_1, verdict: passed}')
+    assert str(
+        tc_finished_event) == expected
 
 
 # @pytest.skip('needs mock')
@@ -53,8 +67,7 @@ def test_connection_termination_unicode(connection_termination_event):
 
 def test_tc_start_event_serialize(tc_start_event):
     serialized = tc_start_event.serialize()
-    expected = json.dumps({'text': 'mytext',
-                           'type': 'tc_started',
+    expected = json.dumps({'type': 'tc_started',
                            'timestamp': '2014-02-01T08:09:10'
                            })
     assert serialized == expected
@@ -63,21 +76,20 @@ def test_tc_start_event_serialize(tc_start_event):
 
 def test_connection_termination_serialize(connection_termination_event):
     serialized = connection_termination_event.serialize()
-    expected = json.dumps({'text': '',
-                           'type': 'terminate_connection',
+    expected = json.dumps({'type': 'terminate_connection',
                            'timestamp': '2014-02-01T08:09:10'
                            })
     assert serialized == expected
 
 
 def test_parse_tc_start():
-    event_json = ('{"text": "mytext", "type": "tc_started",'
+    event_json = ('{"type": "tc_started",'
                   ' "timestamp": "2014-02-01T08:09:10"}')
     sut.Event.parse(event_json)
 
 
 def test_parse_connection_termination():
-    event_json = ('{"text": "", "type": "terminate_connection",'
+    event_json = ('{"type": "terminate_connection",'
                   ' "timestamp": "2014-02-01T08:09:10"}')
     sut.Event.parse(event_json)
 

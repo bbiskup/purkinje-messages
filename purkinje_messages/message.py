@@ -9,6 +9,7 @@ import json
 import abc
 from future.utils import with_metaclass
 from voluptuous import Schema, Required
+from flotsam import collection_util as cu
 import logging
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,17 @@ class MessageException(Exception):
     """Message-related error
     """
     pass
+
+
+class Verdict:
+
+    """Test verdicts"""
+    PASS = 'passed'
+    FAIL = 'fail'
+
+    # When the test could not be completed, e.g. beause
+    # an unexpected exception was raised
+    ERROR = 'error'
 
 
 class MsgType(object):
@@ -54,15 +66,13 @@ class Event(with_metaclass(abc.ABCMeta, object)):
                            the base class constraints
         """
         self.timestamp = datetime.now()
-        self.data = {'type': kwargs['type'],
-                     'text': kwargs['text'],
-                     'timestamp': datetime.isoformat(
-                         self.timestamp)}
+        self.data = kwargs
+        self.data['timestamp'] = datetime.isoformat(
+            self.timestamp)
 
         base_schema = {
             Required('type'): str,
             Required('timestamp'): str,
-            Required('text'): str
         }
         schema = deepcopy(schema)
         schema.update(base_schema)
@@ -91,9 +101,13 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         """payload, to be filled with message type specific data """
 
     def __unicode__(self):
+        remaining_data = deepcopy(self.data)
+        del remaining_data['type']
+        del remaining_data['timestamp']
+        remaining_str = cu.pretty_dict(remaining_data)
         return u'{}: [{}] {}'.format(self.data['type'],
                                      self.data['timestamp'],
-                                     self.data['text'])
+                                     remaining_str)
 
     @staticmethod
     def parse(event_json):
@@ -136,6 +150,20 @@ class TestCaseStartEvent(Event):
         pass  # no extra data
 
 
+@register_eventclass(MsgType.TC_FINISHED)
+class TestCaseFinishedEvent(Event):
+
+    def __init__(self, **kwargs):
+        schema = {Required('name'): str,
+                  Required('verdict'): Verdict}
+        kwargs['type'] = MsgType.TC_FINISHED
+        super(TestCaseFinishedEvent, self).__init__(schema,
+                                                    **kwargs)
+
+    def _serialize(self, body):
+        pass  # no extra data
+
+
 @register_eventclass(MsgType.TERMINATE_CONNECTION)
 class ConnectionTerminationEvent(Event):
 
@@ -143,8 +171,7 @@ class ConnectionTerminationEvent(Event):
         schema = {}
         super(ConnectionTerminationEvent, self).__init__(
             schema,
-            type=MsgType.TERMINATE_CONNECTION,
-            text='')
+            type=MsgType.TERMINATE_CONNECTION)
 
     def _serialize(self, body):
         pass

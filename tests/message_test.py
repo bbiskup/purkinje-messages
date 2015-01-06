@@ -49,7 +49,8 @@ def tc_finished_event(mock_date):
 def session_started_event(mock_date):
     return sut.SessionStartedEvent(
         suite_name='testhost: /abc/xyz',
-        suite_hash='668a86604fc7028f2d9ea4016ae0bf7c'
+        suite_hash='668a86604fc7028f2d9ea4016ae0bf7c',
+        tc_count=10
     )
 
 
@@ -86,7 +87,7 @@ def test_session_started_event_unicode(session_started_event):
     expected = ('session_started: '
                 '[2014-02-01T08:09:10] {suite_hash:'
                 ' 668a86604fc7028f2d9ea4016ae0bf7c,'
-                ' suite_name: testhost: /abc/xyz}')
+                ' suite_name: testhost: /abc/xyz, tc_count: 10}')
     assert str(
         session_started_event) == expected
 
@@ -138,6 +139,7 @@ def test_session_started_serialize(session_started_event):
                 'timestamp': '2014-02-01T08:09:10',
                 'suite_name': u'testhost: /abc/xyz',
                 'suite_hash': u'668a86604fc7028f2d9ea4016ae0bf7c',
+                'tc_count': 10
                 }
     assert json.loads(serialized) == expected
 
@@ -180,7 +182,9 @@ def test_parse_session_started():
     event_json = ('{"type": "session_started",'
                   ' "timestamp": "2014-02-01T08:09:10",'
                   ' "suite_name": "testhost: /abc/xyz",'
-                  ' "suite_hash": "668a86604fc7028f2d9ea4016ae0bf7c"}')
+                  ' "suite_hash": "668a86604fc7028f2d9ea4016ae0bf7c",'
+                  ' "tc_count": 10'
+                  '}')
     sut.Event.parse(event_json)
 
 

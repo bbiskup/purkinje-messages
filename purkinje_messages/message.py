@@ -82,7 +82,7 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         }
         schema = deepcopy(schema)
         schema.update(base_schema)
-        self._schema = Schema(schema)
+        self._schema = Schema(schema, required=True)
         # print("##### %s >>>> %s", schema, self.data)
 
     def validate(self):
@@ -209,9 +209,12 @@ class SessionStartedEvent(Event):
            suite_name: unique name identifying test suite. Should contain
                        host and directory.
            suite_hash: hash of suite_name for correlation (e.g. MD5)
+           tc_count: number of test cases in suite. Set to -1 if number
+                     is not known beforehand
         """
         schema = {Required('suite_name'): basestring,
-                  Required('suite_hash'): basestring}
+                  Required('suite_hash'): basestring,
+                  Required('tc_count'): int}
         kwargs['type'] = MsgType.SESSION_STARTED
         super(SessionStartedEvent, self).__init__(
             schema,

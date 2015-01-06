@@ -165,10 +165,17 @@ class TestCaseStartEvent(Event):
 class TestCaseFinishedEvent(Event):
 
     def __init__(self, **kwargs):
+        """Message fields:
+            file: name of file in which the test case is defined
+            name: name of test case (unique within file; not necessarily
+                  globally unique)
+            verdict: outcome of test ('pass', 'fail', ... TODO)
+            duration: duration of execution, in milliseconds
+        """
         schema = {Required('file'): basestring,
                   Required('name'): basestring,
                   Required('verdict'): basestring,
-                  Required('duration'): float}
+                  Required('duration'): int}
         kwargs['type'] = MsgType.TC_FINISHED
         super(TestCaseFinishedEvent, self).__init__(schema,
                                                     **kwargs)

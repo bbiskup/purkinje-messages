@@ -168,16 +168,18 @@ class TestCaseFinishedEvent(Event):
 
     def __init__(self, **kwargs):
         """Message fields:
-            file: name of file in which the test case is defined
-            name: name of test case (unique within file; not necessarily
-                  globally unique)
-            verdict: outcome of test ('pass', 'fail', ... TODO)
-            duration: duration of execution, in milliseconds
+            file:       name of file in which the test case is defined
+            name:       name of test case (unique within file; not necessarily
+                        globally unique)
+            verdict:    outcome of test ('pass', 'fail', ... TODO)
+            duration:   duration of execution, in milliseconds
+            suite_hash: hash of suite_name for correlation (e.g. MD5)
         """
         schema = {Required('file'): basestring,
                   Required('name'): basestring,
                   Required('verdict'): basestring,
-                  Required('duration'): int}
+                  Required('duration'): int,
+                  Required('suite_hash'): basestring}
         kwargs['type'] = MsgType.TC_FINISHED
         super(TestCaseFinishedEvent, self).__init__(schema,
                                                     **kwargs)
@@ -203,6 +205,11 @@ class ConnectionTerminationEvent(Event):
 class SessionStartedEvent(Event):
 
     def __init__(self, **kwargs):
+        """Message fields:
+           suite_name: unique name identifying test suite. Should contain
+                       host and directory.
+           suite_hash: hash of suite_name for correlation (e.g. MD5)
+        """
         schema = {Required('suite_name'): basestring,
                   Required('suite_hash'): basestring}
         kwargs['type'] = MsgType.SESSION_STARTED
@@ -218,6 +225,9 @@ class SessionStartedEvent(Event):
 class SessionTerminatedEvent(Event):
 
     def __init__(self, **kwargs):
+        """Message fields:
+           suite_hash: hash of suite_name for correlation (e.g. MD5)
+        """
         schema = {Required('suite_hash'): basestring}
         kwargs['type'] = MsgType.SESSION_TERMINATED
         super(SessionTerminatedEvent, self).__init__(

@@ -37,10 +37,12 @@ def connection_termination_event(mock_date):
 
 @pytest.fixture
 def tc_finished_event(mock_date):
-    return sut.TestCaseFinishedEvent(file='/dummydir/dummy_test.py',
-                                     name='tc_1',
-                                     verdict=sut.Verdict.PASS,
-                                     duration=5)
+    return sut.TestCaseFinishedEvent(
+        file='/dummydir/dummy_test.py',
+        name='tc_1',
+        verdict=sut.Verdict.PASS,
+        duration=5,
+        suite_hash='668a86604fc7028f2d9ea4016ae0bf7c')
 
 
 @pytest.fixture
@@ -73,7 +75,9 @@ def test_connection_termination_unicode(connection_termination_event):
 def test_tc_finished_event_unicode(tc_finished_event):
     expected = ('tc_finished: [2014-02-01T08:09:10]'
                 ' {duration: 5, file: /dummydir/dummy_test.py, '
-                'name: tc_1, verdict: passed}')
+                'name: tc_1, '
+                'suite_hash: 668a86604fc7028f2d9ea4016ae0bf7c'
+                ', verdict: passed}')
     assert str(
         tc_finished_event) == expected
 
@@ -102,7 +106,7 @@ def test_session_terminated_event_unicode(session_terminated_event):
 def test_tc_start_event_serialize(tc_start_event):
     serialized = tc_start_event.serialize()
     expected = {'type': 'tc_started',
-                'timestamp': '2014-02-01T08:09:10'
+                'timestamp': '2014-02-01T08:09:10',
                 }
     assert json.loads(serialized) == expected
 
@@ -110,7 +114,7 @@ def test_tc_start_event_serialize(tc_start_event):
 def test_connection_termination_serialize(connection_termination_event):
     serialized = connection_termination_event.serialize()
     expected = {'type': 'terminate_connection',
-                'timestamp': '2014-02-01T08:09:10'
+                'timestamp': '2014-02-01T08:09:10',
                 }
     assert json.loads(serialized) == expected
 
@@ -122,7 +126,8 @@ def test_tc_finished_event_serialize(tc_finished_event):
                 'verdict': 'passed',
                 'name': 'tc_1',
                 'file': '/dummydir/dummy_test.py',
-                'duration': 5
+                'duration': 5,
+                'suite_hash': '668a86604fc7028f2d9ea4016ae0bf7c'
                 }
     assert json.loads(serialized) == expected
 
@@ -165,7 +170,8 @@ def test_parse_tc_finished():
                   ' "verdict": "passed",'
                   ' "file": "/dummydir/dummy_test.py",'
                   ' "name": "tc_1", '
-                  ' "duration": 5'
+                  ' "duration": 5, '
+                  ' "suite_hash": "668a86604fc7028f2d9ea4016ae0bf7c"'
                   ' }')
     sut.Event.parse(event_json)
 

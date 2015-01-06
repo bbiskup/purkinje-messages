@@ -39,7 +39,8 @@ def connection_termination_event(mock_date):
 def tc_finished_event(mock_date):
     return sut.TestCaseFinishedEvent(file='/dummydir/dummy_test.py',
                                      name='tc_1',
-                                     verdict=sut.Verdict.PASS)
+                                     verdict=sut.Verdict.PASS,
+                                     duration=1.5)
 
 
 @pytest.fixture
@@ -61,7 +62,7 @@ def test_connection_termination_unicode(connection_termination_event):
 
 def test_tc_finished_event_unicode(tc_finished_event):
     expected = ('tc_finished: [2014-02-01T08:09:10]'
-                ' {file: /dummydir/dummy_test.py, '
+                ' {duration: 1.5, file: /dummydir/dummy_test.py, '
                 'name: tc_1, verdict: passed}')
     assert str(
         tc_finished_event) == expected
@@ -100,7 +101,8 @@ def test_tc_finished_event_serialize(tc_finished_event):
                 'timestamp': '2014-02-01T08:09:10',
                 'verdict': 'passed',
                 'name': 'tc_1',
-                'file': '/dummydir/dummy_test.py'
+                'file': '/dummydir/dummy_test.py',
+                'duration': 1.5
                 }
     assert json.loads(serialized) == expected
 
@@ -131,7 +133,9 @@ def test_parse_tc_finished():
                   ' "timestamp": "2014-02-01T08:09:10",'
                   ' "verdict": "passed",'
                   ' "file": "/dummydir/dummy_test.py",'
-                  ' "name": "tc_1"}')
+                  ' "name": "tc_1", '
+                  ' "duration": 1.5'
+                  ' }')
     sut.Event.parse(event_json)
 
 

@@ -46,6 +46,8 @@ class MsgType(object):
     PROJ_INFO = 'proj_info'
 
     SESSION_STARTED = 'session_started'
+    SESSION_TERMINATED = 'session_terminated'
+
     TC_STARTED = 'tc_started'
     TC_FINISHED = 'tc_finished'
 
@@ -205,6 +207,20 @@ class SessionStartedEvent(Event):
                   Required('suite_hash'): basestring}
         kwargs['type'] = MsgType.SESSION_STARTED
         super(SessionStartedEvent, self).__init__(
+            schema,
+            **kwargs)
+
+    def _serialize(self, body):
+        pass
+
+
+@register_eventclass(MsgType.SESSION_TERMINATED)
+class SessionTerminatedEvent(Event):
+
+    def __init__(self, **kwargs):
+        schema = {Required('suite_hash'): basestring}
+        kwargs['type'] = MsgType.SESSION_TERMINATED
+        super(SessionTerminatedEvent, self).__init__(
             schema,
             **kwargs)
 

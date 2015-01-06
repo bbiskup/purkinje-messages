@@ -45,7 +45,10 @@ def tc_finished_event(mock_date):
 
 @pytest.fixture
 def session_started_event(mock_date):
-    return sut.SessionStartedEvent()
+    return sut.SessionStartedEvent(
+        suite_name='testhost: /abc/xyz',
+        suite_hash='668a86604fc7028f2d9ea4016ae0bf7c'
+    )
 
 
 def test_tc_start_event_unicode(tc_start_event):
@@ -70,7 +73,9 @@ def test_tc_finished_event_unicode(tc_finished_event):
 
 def test_session_started_event_unicode(session_started_event):
     expected = ('session_started: '
-                '[2014-02-01T08:09:10] {}')
+                '[2014-02-01T08:09:10] {suite_hash:'
+                ' 668a86604fc7028f2d9ea4016ae0bf7c,'
+                ' suite_name: testhost: /abc/xyz}')
     assert str(
         session_started_event) == expected
 
@@ -110,7 +115,9 @@ def test_tc_finished_event_serialize(tc_finished_event):
 def test_session_started_serialize(session_started_event):
     serialized = session_started_event.serialize()
     expected = {'type': 'session_started',
-                'timestamp': '2014-02-01T08:09:10'
+                'timestamp': '2014-02-01T08:09:10',
+                'suite_name': u'testhost: /abc/xyz',
+                'suite_hash': u'668a86604fc7028f2d9ea4016ae0bf7c',
                 }
     assert json.loads(serialized) == expected
 
@@ -141,7 +148,9 @@ def test_parse_tc_finished():
 
 def test_parse_session_started():
     event_json = ('{"type": "session_started",'
-                  ' "timestamp": "2014-02-01T08:09:10"}')
+                  ' "timestamp": "2014-02-01T08:09:10",'
+                  ' "suite_name": "testhost: /abc/xyz",'
+                  ' "suite_hash": "668a86604fc7028f2d9ea4016ae0bf7c"}')
     sut.Event.parse(event_json)
 
 

@@ -201,10 +201,12 @@ class ConnectionTerminationEvent(Event):
 class SessionStartedEvent(Event):
 
     def __init__(self, **kwargs):
-        schema = {}
+        schema = {Required('suite_name'): basestring,
+                  Required('suite_hash'): basestring}
+        kwargs['type'] = MsgType.SESSION_STARTED
         super(SessionStartedEvent, self).__init__(
             schema,
-            type=MsgType.SESSION_STARTED)
+            **kwargs)
 
     def _serialize(self, body):
         pass

@@ -91,8 +91,8 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         try:
             self._schema(self.data)
         except TypeError, e:
-            raise MessageException('Validation failed: {}'
-                                   .format(e))
+            raise MessageException('Validation failed: {} ({})'
+                                   .format(e, self.data))
 
     def serialize(self):
         """Creates JSON representation of Event object.

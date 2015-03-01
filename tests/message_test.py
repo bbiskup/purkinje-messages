@@ -9,10 +9,9 @@ import pytest
 from datetime import datetime
 from mock import Mock
 import logging
+import purkinje_messages.message as sut
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
-
-import purkinje_messages.message as sut
 
 
 @pytest.fixture

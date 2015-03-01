@@ -1,7 +1,8 @@
 purkinje-messages
 =================
 
-Message definitions for `purkinje test runner <https://github.com/bbiskup/purkinje>`_
+Message definitions for the purkinje test runner.
+See `purkinje test runner <https://github.com/bbiskup/purkinje>`_.
 
 
 Development

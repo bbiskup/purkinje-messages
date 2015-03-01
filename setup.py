@@ -25,7 +25,7 @@ class Tox(TestCommand):
         sys.exit(errcode)
 
 setup(name='purkinje-messages',
-      version='0.1.1',
+      version='0.1.2',
       description='message definitions for purkinje test runner',
       long_description=readme + '\n\n' + history,
       author='Bernhard (Bernd) Biskup',

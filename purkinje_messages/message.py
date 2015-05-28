@@ -91,7 +91,7 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         try:
             self._schema(self.data)
         except TypeError, e:
-            raise MessageException('Validation failed: {} ({})'
+            raise MessageException('Validation failed: {0} ({1})'
                                    .format(e, self.data))
 
     def serialize(self):
@@ -116,9 +116,9 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         del remaining_data['type']
         del remaining_data['timestamp']
         remaining_str = cu.pretty_dict(remaining_data)
-        return u'{}: [{}] {}'.format(self.data['type'],
-                                     self.data['timestamp'],
-                                     remaining_str)
+        return u'{0}: [{1}] {2}'.format(self.data['type'],
+                                        self.data['timestamp'],
+                                        remaining_str)
 
     @staticmethod
     def parse(event_json):
@@ -130,7 +130,7 @@ class Event(with_metaclass(abc.ABCMeta, object)):
             raise MessageException('Missing event type')
         event_cls = EVENT_REGISTRY.get(event_type)
         if not event_cls:
-            raise MessageException('Unknown event type {}'.format(event_type))
+            raise MessageException('Unknown event type {0}'.format(event_type))
         result = event_cls(**event_dict)
         result.validate()
         return result
@@ -144,7 +144,7 @@ def register_eventclass(event_id):
             raise MessageException(('Cannot register a class that'
                                     ' is not a subclass of Event'))
         EVENT_REGISTRY[event_id] = cls
-        logger.debug('######### Event registry is now: {}'.format(
+        logger.debug('######### Event registry is now: {0}'.format(
             EVENT_REGISTRY))
         return cls
     return register

@@ -66,13 +66,13 @@ def test_tc_start_event_unicode(tc_start_event):
         tc_start_event) == expected
 
 
-def test_connection_termination_unicode(connection_termination_event):
+def test_term_unicode(connection_termination_event):
     expected = ('terminate_connection: '
                 "[2014-02-01T08:09:10] {}")
     assert str(connection_termination_event) == expected
 
 
-def test_tc_finished_event_unicode(tc_finished_event):
+def test_tc_finished_unicode(tc_finished_event):
     expected = ('tc_finished: [2014-02-01T08:09:10]'
                 ' {duration: 5, file: /dummydir/dummy_test.py, '
                 'name: tc_1, '
@@ -82,7 +82,7 @@ def test_tc_finished_event_unicode(tc_finished_event):
         tc_finished_event) == expected
 
 
-def test_session_started_event_unicode(session_started_event):
+def test_ses_start_unicode(session_started_event):
     expected = ('session_started: '
                 '[2014-02-01T08:09:10] {suite_hash:'
                 ' 668a86604fc7028f2d9ea4016ae0bf7c,'
@@ -91,7 +91,7 @@ def test_session_started_event_unicode(session_started_event):
         session_started_event) == expected
 
 
-def test_session_terminated_event_unicode(session_terminated_event):
+def test_ses_term_unicode(session_terminated_event):
     expected = ('session_terminated: '
                 '[2014-02-01T08:09:10] {suite_hash:'
                 ' 668a86604fc7028f2d9ea4016ae0bf7c}')

@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 """Message/event type for communication with browser and test runner"""
-from builtins import object, basestring
-
+from builtins import object
+import logging
 from datetime import datetime
 from copy import deepcopy
 import json
 import abc
 from future.utils import with_metaclass
+
 from voluptuous import Schema, Required
 from flotsam import collection_util as cu
-import logging
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +59,7 @@ class MsgType(object):
     ERROR = 'error'
 
 
+@six.python_2_unicode_compatible
 class Event(with_metaclass(abc.ABCMeta, object)):
 
     """An event for the browser"""
@@ -77,8 +79,8 @@ class Event(with_metaclass(abc.ABCMeta, object)):
                 timestamp)
 
         base_schema = {
-            Required('type'): basestring,
-            Required('timestamp'): basestring,
+            Required('type'): six.string_types[0],
+            Required('timestamp'): six.string_types[0],
         }
         schema = deepcopy(schema)
         schema.update(base_schema)
@@ -90,7 +92,7 @@ class Event(with_metaclass(abc.ABCMeta, object)):
         """
         try:
             self._schema(self.data)
-        except TypeError, e:
+        except TypeError as e:
             raise MessageException('Validation failed: {0} ({1})'
                                    .format(e, self.data))
 
@@ -111,7 +113,7 @@ class Event(with_metaclass(abc.ABCMeta, object)):
     def _serialize(self, body):
         """payload, to be filled with message type specific data """
 
-    def __unicode__(self):
+    def __str__(self):
         remaining_data = deepcopy(self.data)
         del remaining_data['type']
         del remaining_data['timestamp']
@@ -175,11 +177,11 @@ class TestCaseFinishedEvent(Event):
             duration:   duration of execution, in milliseconds
             suite_hash: hash of suite_name for correlation (e.g. MD5)
         """
-        schema = {Required('file'): basestring,
-                  Required('name'): basestring,
-                  Required('verdict'): basestring,
+        schema = {Required('file'): six.string_types[0],
+                  Required('name'): six.string_types[0],
+                  Required('verdict'): six.string_types[0],
                   Required('duration'): int,
-                  Required('suite_hash'): basestring}
+                  Required('suite_hash'): six.string_types[0]}
         kwargs['type'] = MsgType.TC_FINISHED
         super(TestCaseFinishedEvent, self).__init__(schema,
                                                     **kwargs)
@@ -212,8 +214,8 @@ class SessionStartedEvent(Event):
            tc_count: number of test cases in suite. Set to -1 if number
                      is not known beforehand
         """
-        schema = {Required('suite_name'): basestring,
-                  Required('suite_hash'): basestring,
+        schema = {Required('suite_name'): six.string_types[0],
+                  Required('suite_hash'): six.string_types[0],
                   Required('tc_count'): int}
         kwargs['type'] = MsgType.SESSION_STARTED
         super(SessionStartedEvent, self).__init__(
@@ -231,7 +233,7 @@ class SessionTerminatedEvent(Event):
         """Message fields:
            suite_hash: hash of suite_name for correlation (e.g. MD5)
         """
-        schema = {Required('suite_hash'): basestring}
+        schema = {Required('suite_hash'): six.string_types[0]}
         kwargs['type'] = MsgType.SESSION_TERMINATED
         super(SessionTerminatedEvent, self).__init__(
             schema,

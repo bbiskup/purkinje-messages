@@ -26,7 +26,7 @@ class Tox(TestCommand):
 
 
 setup(name='purkinje-messages',
-      version='0.1.3',
+      version='0.1.4',
       description='message definitions for purkinje test runner',
       long_description=readme + '\n\n' + history,
       author='Bernhard (Bernd) Biskup',

@@ -1,6 +1,7 @@
 language: python
 python:
   - "2.7"
+  - "3.5"
 cache:
   apt: true
   # TODO local node modules path correct?
@@ -8,6 +9,7 @@ cache:
     - $HOME/.pip-cache/
     - $HOME/.tox
     - /home/travis/virtualenv/python2.7
+    - /home/travis/virtualenv/python3.5
 install:
   - echo 'Running installation in directory $PWD'
   - # Python

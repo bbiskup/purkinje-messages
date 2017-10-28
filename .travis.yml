@@ -19,10 +19,5 @@ install:
   - pip freeze
 
 script:
-  - tox
+  - py.test
 
-  - # Documentation
-  # - make doc
-
-after_succes:
-  coveralls

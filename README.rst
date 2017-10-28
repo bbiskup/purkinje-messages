@@ -10,7 +10,7 @@ Development
 
 Clone other relevant purkinje-* packages, then
 
- mkvirtualenv purkinje
- workon purkinje
- pip install --editable .
+    mkvirtualenv purkinje
+    workon purkinje
+    pip install -e .
 

@@ -8,9 +8,9 @@ See `purkinje test runner <https://github.com/bbiskup/purkinje>`_.
 Development
 ===========
 
-Clone other relevant purkinje-* packages, then
+Clone other relevant `purkinje-*` packages, then::
 
-    mkvirtualenv purkinje
-    workon purkinje
-    pip install -e .
+ mkvirtualenv purkinje
+ workon purkinje
+ pip install -e .
 
